@@ -17,7 +17,7 @@ function [testlabels] = multisvm(traindata,trainlabels,testdata)
 %finding the number of unique classes
 uniqueclasses=unique(trainlabels);
 count=length(uniqueclasses);
-
+k=count;
 %initialising the testlabels vector
 testlabels = zeros(size(testdata,1),1);
 
@@ -28,14 +28,14 @@ for k=1:count
     %we train an svm model for each class and only labels for the training
     %data belonging to that class is 1 and for the rest it is 0.
     labels=(trainlabels==uniqueclasses(k));
-    svmmodels(k) = svmtrain(traindata,labels,'kernel_function','rbf');
+    svmmodels(k) = {svmtrain(traindata,labels,'kernel_function','rbf')};
 end
 
 %classifying the testdata
 for j=1:size(testdata,1)
     
     for k=1:count
-        if(svmclassify(svmmodels(k),testdata(j,:))) 
+        if(svmclassify(svmmodels{k}(1),testdata(j,:))) 
             break;
         end
     end
@@ -58,7 +58,3 @@ end
 
 %You can find more details here: http://in.mathworks.com/help/stats/fitcecoc.html
 %----------------------------------------------------
-
-
-
-
